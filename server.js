@@ -37,7 +37,7 @@ app.post('/create', async (req,res) =>{
 })
 
 // Read all namecard users information
-app.get('/', async (req,res) => { 
+app.get('/usersContact', async (req,res) => { 
     try {
         // Ambil collection / table namenya
         const usersCollection = db.collection('usersContact')
@@ -58,7 +58,7 @@ app.get('/', async (req,res) => {
 })
 
 // Read only specific namecard 
-    app.get('/:id', async (req,res) => {
+    app.get('/usersContact/:id', async (req,res) => {
         try {
             // Ambil collection / table namenya
             const usersCollection = db.collection('usersContact').doc(req.params.id)
@@ -72,6 +72,8 @@ app.get('/', async (req,res) => {
             console.log(error);
         }
     })
+
+
 
 
 
