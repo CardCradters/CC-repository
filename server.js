@@ -29,12 +29,49 @@ app.post('/create', async (req,res) =>{
         workplace : req.body.workplace
     }
         // making collection dari isi user
-        const createCollection = db.collection('usersContact').add(user)
+        const createCollection = await db.collection('usersContact').add(user)
         res.send(response)
     } catch (error) {
         res.send(error)
     }
 })
+
+// Read all namecard users information
+app.get('/', async (req,res) => { 
+    try {
+        // Ambil collection / table namenya
+        const usersCollection = db.collection('usersContact')
+        // Method get() untuk mengambil isi dari collection / table
+        const getCollection = await usersCollection.get();
+
+        // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
+        // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
+        let getCollectionData = []
+
+        getCollection.forEach(allFiles => {
+            getCollectionData.push(allFiles.data())
+        });
+        res.send(getCollectionData);
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+// Read only specific namecard 
+    app.get('/:id', async (req,res) => {
+        try {
+            // Ambil collection / table namenya
+            const usersCollection = db.collection('usersContact').doc(req.params.id)
+            // Method get() untuk mengambil isi dari collection / table
+            const getCollection = await usersCollection.get();
+    
+            // karena cuma 1 namecard jadi kita tidak perlu lakukan for loop untuk mengambil data
+            // cukup langsung tambahkan .data() di getCollection.
+            res.send(getCollection.data());
+        } catch (error) {
+            console.log(error);
+        }
+    })
 
 
 
