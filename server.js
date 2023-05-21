@@ -1,13 +1,12 @@
-
 const express = require('express')
-const app = express()
 const bcrypt = require('bcrypt')
-
+const cors = require('cors')
+const bodyParser = require('body-parser')
 // Setup for service account initializing node js to connect to firebase API
 const admin = require('firebase-admin')
 const credentials = require('./key.json')
 
-
+const app = express()
 admin.initializeApp({
     credential: admin.credential.cert(credentials),
     // Realtime DB URL
@@ -17,6 +16,8 @@ admin.initializeApp({
 // firestore
 const db = admin.firestore()
 
+app.use(cors());
+app.use(bodyParser.json());
 
 // Initialize server
 app.use(express.json())
@@ -32,11 +33,21 @@ app.post('/api/signup', async (req,res) =>{
         password: req.body.password,
     }
 
+    const additionalInfo = {
+          // additional info
+          phoneCompany : "",
+          phoneFax : "",
+          workplace_uri : "",
+          workplace : "",
+          alamat : "",
+    }
+
     const userCreate = await admin.auth().createUser({
         name: userProperty.name,
         phoneNumber: userProperty.phoneNumber,
         email: userProperty.email,
         password: userProperty.password,
+
         emailVerified: false,
         disabled: false,
     })
@@ -51,7 +62,13 @@ app.post('/api/signup', async (req,res) =>{
         name: userProperty.name,
         phoneNumber: userProperty.phoneNumber,
         email: userProperty.email,
-        password: hashedPassword
+        password: hashedPassword,
+         // additional info
+         phoneCompany : additionalInfo.phoneCompany,
+         phoneFax : additionalInfo.phoneFax,
+         workplace_uri : additionalInfo.workplace_uri,
+         workplace : additionalInfo.workplace,
+         alamat : additionalInfo.alamat,
     })
         .then(() => {
             console.log(userProperty.password)
@@ -67,21 +84,9 @@ app.post('/api/signup', async (req,res) =>{
     })    
 
 
-app.post('/api/signin', async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-      const getUser = await admin.auth().getUserByEmail(email);
-      const token = await admin.auth().createCustomToken(getUser.uid);
-  
-      res.json({ message: 'User login successful', token });
-    } catch (error) {
-      res.status(401).json({ message: 'User login failed', error: error.message });
-    }
-  });
 
 // Homepage
-app.get('/api/usersContact', async (req,res) => { 
+app.get('/api/homepage', async (req,res) => { 
     try {
         // Ambil collection / table namenya
         const usersCollection = db.collection('usersContact')
@@ -102,8 +107,8 @@ app.get('/api/usersContact', async (req,res) => {
     }
 })
 
-// Profile 
-    app.get('/api/usersContact/:id', async (req,res) => {
+// Profile berdasarkan Specific ID
+app.get('/api/homepage/:id', async (req,res) => {
         try {
             // Ambil collection / table namenya
             const usersCollection = db.collection('usersContact').doc(req.params.id)
@@ -116,7 +121,44 @@ app.get('/api/usersContact', async (req,res) => {
         } catch (error) {
             console.log(error);
         }
-    })
+})
+
+// Profile kita
+app.get('/api/profile/:id', async (req,res) => {
+
+
+    try {
+          const realtimeDb =  admin.database().ref('users/').child(req.params.id).on('value', (snapshot) => {
+            console.log(snapshot.val());
+            res.status(200).json({ message: 'Berikut User Dengan ID '+req.params.id, user: snapshot.val()});
+          },(errorObject) => {
+            console.log('Data read failed: '+errorObject.name);
+          })
+    }catch (error) {
+        console.log(error);
+    }
+})
+// Update Profile kita
+app.post('/api/profile/:id', async (req,res) => {
+    try {
+        const realtimeDB = admin.database().ref('users/').child(req.params.id).update({
+            phoneCompany: req.body.phoneCompany,
+            phoneFax: req.body.phoneFax,
+            workplace_uri: req.body.workplace_uri,
+            workplace: req.body.workplace,
+            alamat: req.body.alamat
+        })
+
+        res.status(200).json({ message: 'User updated successfully!'});
+        console.log(realtimeDB);
+       
+      
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Failed to update User!'});
+
+    }
+})
 
 
 // Server running on port ....
