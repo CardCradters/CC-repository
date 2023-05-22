@@ -108,7 +108,7 @@ app.get('/api/homepage', async (req,res) => {
 })
 
 // Profile berdasarkan Specific ID
-app.get('/api/homepage/:id', async (req,res) => {
+app.get('/api/:id/homepage', async (req,res) => {
         try {
             // Ambil collection / table namenya
             const usersCollection = db.collection('usersContact').doc(req.params.id)
@@ -124,7 +124,7 @@ app.get('/api/homepage/:id', async (req,res) => {
 })
 
 // Profile kita
-app.get('/api/profile/:id', async (req,res) => {
+app.get('/api/:id/profile', async (req,res) => {
 
 
           const realtimeDb =  admin.database().ref('users/').child(req.params.id).once('value') 
@@ -140,9 +140,11 @@ app.get('/api/profile/:id', async (req,res) => {
 
 })
 // Update Profile kita
-app.post('/api/profile/:id', async (req,res) => {
+app.post('/api/:id/profile', async (req,res) => {
     try {
         const realtimeDB = admin.database().ref('users/').child(req.params.id).update({
+            // emailCompany: req.body.emailCompany,
+            // phoneCompanyMobile : req.body.phoneCompanyMobile,
             phoneCompany: req.body.phoneCompany,
             phoneFax: req.body.phoneFax,
             workplace_uri: req.body.workplace_uri,
