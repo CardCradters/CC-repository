@@ -127,16 +127,17 @@ app.get('/api/homepage/:id', async (req,res) => {
 app.get('/api/profile/:id', async (req,res) => {
 
 
-    try {
-          const realtimeDb =  admin.database().ref('users/').child(req.params.id).on('value', (snapshot) => {
-            console.log(snapshot.val());
-            res.status(200).json({ message: 'Berikut User Dengan ID '+req.params.id, user: snapshot.val()});
-          },(errorObject) => {
-            console.log('Data read failed: '+errorObject.name);
+          const realtimeDb =  admin.database().ref('users/').child(req.params.id).once('value') 
+            .then((snapshot) => {
+            // Access the data snapshot
+            const data = snapshot.val();
+            res.send(data)
+            console.log(data);
           })
-    }catch (error) {
-        console.log(error);
-    }
+          .catch((error) => {
+            console.error(error);
+          })
+
 })
 // Update Profile kita
 app.post('/api/profile/:id', async (req,res) => {
