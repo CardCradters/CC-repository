@@ -7,7 +7,6 @@ const admin = require('firebase-admin')
 const credentials = require('./key.json')
 const response = require('./response')
 
-
 const app = express()
 admin.initializeApp({
     credential: admin.credential.cert(credentials),
@@ -27,7 +26,6 @@ app.use(express.urlencoded({extended:true}))
 function verifyIdToken(idToken) {
     return admin.auth().verifyIdToken(idToken)
 }
-
 
 // SignUp
 app.post('/v1/auth/signup', async (req,res) =>{
@@ -90,26 +88,39 @@ app.post('/v1/auth/signup', async (req,res) =>{
 
 // Homepage
 app.get('/v1/homepage', async (req,res) => { 
-    try {
-        // Ambil collection / table namenya
-        const usersCollection = db.collection('usersContact')
-        // Method get() untuk mengambil isi dari collection / table
-        const getCollection = await usersCollection.get();
-        // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
-        // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
-        let getCollectionData = []  
-        getCollection.forEach(allFiles => {
-            getCollectionData.push(allFiles.data())
-            
-        });
-        console.log(getCollectionData)
-        response(200,getCollectionData,"Saved User",res)
+    // Verify Token
+    const authHeader = req.headers.authorization
+    
+    if(!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).send('Unauthorized')
+    }
 
-    } catch (error) {   
+    const idToken = authHeader.split('Bearer ') [1]
+
+    verifyIdToken(idToken)
+    .then((decodedToken) => {
+        const userId = decodedToken.uid
+        
+          // Ambil collection / table namenya
+          const usersCollection = db.collection('users').doc(userId).collection('usersContact')
+          // Method get() untuk mengambil isi dari collection / table
+          const getCollection = usersCollection.get();
+          // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
+          // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
+          let getCollectionData = []  
+          getCollection.forEach(allFiles => {
+              getCollectionData.push(allFiles.data())
+              
+          });
+          console.log(getCollectionData)
+          response(200,getCollectionData,"Saved User",res)
+    }) .catch ((error) => {   
         console.log(error)
         response(500,error,"No Saved User",res)
+    })
 
-    }
+
+
 })
 
 // user detail
@@ -126,7 +137,7 @@ app.get('/v1/user-detail/:id', async (req,res) => {
                 const userId = decodedToken.uid
                 
             // Ambil collection / table namenya
-            const usersCollection = db.collection('usersContact').doc(userId)
+            const usersCollection = db.collection('usersContact').doc(req.body.id)
             // Method get() untuk mengambil isi dari collection / table
             const getCollection = usersCollection.get(); 
             // karena cuma 1 namecard jadi kita tidak perlu lakukan for loop untuk mengambil data
@@ -163,10 +174,8 @@ app.get('/v1/profile', async (req,res) => {
     })
 });
        
-
-
 // Update Profile kita
-app.post('/v1/profile/', async (req,res) => {
+app.post('/v1/profile', async (req,res) => {
     
     const authHeader = req.headers.authorization
     if(!authHeader || !authHeader.startsWith('Bearer ')) {
