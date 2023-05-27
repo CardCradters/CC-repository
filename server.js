@@ -133,11 +133,11 @@ app.get('/v1/homepage/:id', async (req,res) => {
         })
         const capitalizedName = capitalizedWords.join(' ')
         console.log(capitalizedName);
-        
+
         const collectionRef = db.collection('users');
         const querySnapshot = await collectionRef
           .where('name', '>=', capitalizedName)
-          .where('name', '<=', capitalizedName + '\uf8ff')
+          .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title')
           .get();
     
         const results = [];
