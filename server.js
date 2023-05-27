@@ -122,6 +122,37 @@ app.get('/v1/homepage', async (req,res) => {
 
 })
 
+// Homepage search
+app.get('/v1/homepage/:id', async (req,res) => {
+    try {
+        const words = req.params.id.split(' ')
+        const capitalizedWords = words.map(word =>{
+            const firstChar = word.charAt(0).toUpperCase();
+            const restOfWord = word.slice(1).toLowerCase();
+            return firstChar + restOfWord;
+        })
+        const capitalizedName = capitalizedWords.join(' ')
+        console.log(capitalizedName);
+        
+        const collectionRef = db.collection('users');
+        const querySnapshot = await collectionRef
+          .where('name', '>=', capitalizedName)
+          .where('name', '<=', capitalizedName + '\uf8ff')
+          .get();
+    
+        const results = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          results.push(data);
+        });
+    
+        response(200,results,"Search results",res)
+
+      } catch (error) {
+        response(400,error,"No users found by Name",res)
+      }
+})
+
 // user detail
 app.get('/v1/user-detail/:id', async (req,res) => {
         try {
@@ -248,6 +279,7 @@ app.post('/v1/profile', async (req,res) => {
 
             if(exceptUserIdDoc.exists)
             {
+                console.log(exceptUserIdDoc);
                 await exceptUserId.update(userUpdate)
                 console.log('Document updated for '+doc.id);
             } else 
@@ -259,16 +291,6 @@ app.post('/v1/profile', async (req,res) => {
         } 
             
     })
-
-    // const documentRef1 = db.collection('users').doc(userId)
-    // const document1 = await documentRef1.get()
-    
-    // await documentRef1.update(userUpdate)
-
-
-    // const documentRef2 = db.collection('usersContact').doc(userId)
-    // await documentRef2.update(userUpdate)
-    // console.log('Data updated in both collections successfully');
     response(200,updatedUser,"User updated",res)
     }) .catch((error) => {
         console.log(error);
