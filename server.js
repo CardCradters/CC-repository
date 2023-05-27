@@ -125,28 +125,39 @@ app.get('/v1/homepage', async (req,res) => {
 // Homepage search
 app.get('/v1/homepage/:id', async (req,res) => {
     try {
-        const words = req.params.id.split(' ')
-        const capitalizedWords = words.map(word =>{
-            const firstChar = word.charAt(0).toUpperCase();
-            const restOfWord = word.slice(1).toLowerCase();
-            return firstChar + restOfWord;
-        })
-        const capitalizedName = capitalizedWords.join(' ')
-        console.log(capitalizedName);
-
-        const collectionRef = db.collection('users');
-        const querySnapshot = await collectionRef
-          .where('name', '>=', capitalizedName)
-          .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title')
-          .get();
+          const authHeader = req.headers.authorization
     
-        const results = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          results.push(data);
-        });
-    
-        response(200,results,"Search results",res)
+            if(!authHeader || !authHeader.startsWith('Bearer ')) {
+                return res.status(403).send('Unauthorized')
+            }
+            const idToken = authHeader.split('Bearer ') [1]
+            verifyIdToken(idToken)
+            .then(async (decodedToken) => {
+                const userId = decodedToken.uid
+                const words = req.params.id.split(' ')
+                const capitalizedWords = words.map(word =>{
+                    const firstChar = word.charAt(0).toUpperCase();
+                    const restOfWord = word.slice(1).toLowerCase();
+                    return firstChar + restOfWord;
+                })
+                const capitalizedName = capitalizedWords.join(' ')
+                console.log(capitalizedName);
+        
+                const collectionRef = db.collection('users');
+                const querySnapshot = await collectionRef
+                  .where('name', '>=', capitalizedName)
+                  .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title')
+                  .get();
+            
+                const results = [];
+                querySnapshot.forEach((doc) => {
+                  const data = doc.data();
+                  results.push(data);
+                });
+            
+                response(200,results,"Search results",res)
+            })
+      
 
       } catch (error) {
         response(400,error,"No users found by Name",res)
