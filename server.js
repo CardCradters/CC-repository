@@ -98,22 +98,21 @@ app.get('/v1/homepage', async (req,res) => {
     const idToken = authHeader.split('Bearer ') [1]
 
     verifyIdToken(idToken)
-    .then((decodedToken) => {
+    .then(async (decodedToken) => {
         const userId = decodedToken.uid
-        
           // Ambil collection / table namenya
           const usersCollection = db.collection('users').doc(userId).collection('usersContact')
           // Method get() untuk mengambil isi dari collection / table
-          const getCollection = usersCollection.get();
+          const getCollection = await usersCollection.select('name','job_title','workplace').get();
           // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
           // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
           let getCollectionData = []  
-          getCollection.forEach(allFiles => {
-              getCollectionData.push(allFiles.data())
-              
-          });
+           getCollection.forEach(allFiles => {
+              getCollectionData.push(allFiles.data()) 
+          })
+          
           console.log(getCollectionData)
-          response(200,getCollectionData,"Saved User",res)
+          response(200,getCollectionData,"Users Contact",res)
     }) .catch ((error) => {   
         console.log(error)
         response(500,error,"No Saved User",res)
@@ -133,20 +132,48 @@ app.get('/v1/user-detail/:id', async (req,res) => {
             }
             const idToken = authHeader.split('Bearer ') [1]
             verifyIdToken(idToken)
-            .then((decodedToken) => {
+            .then(async (decodedToken) => {
                 const userId = decodedToken.uid
                 
             // Ambil collection / table namenya
-            const usersCollection = db.collection('usersContact').doc(req.body.id)
+            const usersCollection = db.collection('users').doc(req.params.id)
             // Method get() untuk mengambil isi dari collection / table
-            const getCollection = usersCollection.get(); 
+            const getCollection = await usersCollection.get(); 
             // karena cuma 1 namecard jadi kita tidak perlu lakukan for loop untuk mengambil data
             // cukup langsung tambahkan .data() di getCollection.
-            response(200,getCollection.data(),"User Created Successfully",res)
+            response(200,getCollection.data(),"Success read profile",res)
             })
         } catch (error) {
             response(500,error,"No user to see",res)
         }
+})
+
+// user detail save
+app.post('/v1/user-detail/:id', async (req,res) => {
+    try {
+        const authHeader = req.headers.authorization
+
+        if(!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(403).send('Unauthorized')
+        }
+        const idToken = authHeader.split('Bearer ') [1]
+        verifyIdToken(idToken)
+        .then(async (decodedToken) => {
+            const userId = decodedToken.uid
+            
+        const parentCollection = db.collection('users').doc(userId)
+        const subCollection = parentCollection.collection('usersContact').doc(req.params.id);
+        const usersSelected = await db.collection('users').doc(req.params.id).get()
+        console.log(usersSelected.data());
+        const usersContact = usersSelected.data();
+        const saveContact = subCollection.set(usersContact)
+        .then((foundUser) => {
+            response(200,foundUser,"User Saved Successfully",res)
+        })
+        })
+    } catch (error) {
+        response(500,error,"Failed to save user",res)
+    }
 })
 
 // Profile kita
@@ -170,6 +197,8 @@ app.get('/v1/profile', async (req,res) => {
             response(200,usersData,"Berikut profile user",res)
             }
         })
+    }) .catch ((error) => {
+        response(200,error,"Login first!",res)
 
     })
 });
@@ -177,15 +206,26 @@ app.get('/v1/profile', async (req,res) => {
 // Update Profile kita
 app.post('/v1/profile', async (req,res) => {
     
+    const userUpdate = {
+        job_title: req.body.job_title,
+        workplace: req.body.workplace,
+        addressCompany: req.body.addressCompany,
+        emailCompany: req.body.emailCompany,
+        phoneTelpCompany : req.body.phoneTelpCompany,
+        phoneFaxCompany: req.body.phoneFaxCompany,
+        phoneMobileCompany: req.body.phoneMobileCompany,
+        workplace_uri: req.body.workplace_uri,
+    }
     const authHeader = req.headers.authorization
     if(!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(403).send('Unauthorized')
     }
     const idToken = authHeader.split('Bearer ') [1]
     verifyIdToken(idToken)
-    .then((decodedToken) => {
-        const userId = decodedToken.uid
-          const realtimeDB = admin.firestore().collection('users/').doc(userId).update({
+    .then(async(decodedToken) => {
+          const userId = decodedToken.uid
+          const collection = db.collection('users')
+          const updatedUser = await collection.doc(userId).update({
             job_title: req.body.job_title,
             workplace: req.body.workplace,
             addressCompany: req.body.addressCompany,
@@ -195,14 +235,39 @@ app.post('/v1/profile', async (req,res) => {
             phoneMobileCompany: req.body.phoneMobileCompany,
             workplace_uri: req.body.workplace_uri,
         })
-        response(200,realtimeDB,"User updated",res)
-    }) .catch((error) => {
-        response(400,error,"Failed to update user",res)
+    
+    
+    const querySnapshot = await db.collection('users').get()
+
+    querySnapshot.forEach(async(doc) => {
+       
+        if(doc.id != userId)
+        {   
+            console.log(doc.id);
+            const exceptUserId = db.collection('users').doc(doc.id).collection('usersContact').doc(userId)
+            const exceptUserIdDoc = await exceptUserId.get()
+    
+            await exceptUserId.update(userUpdate)
+        } 
+            
+        
+
     })
 
+    // const documentRef1 = db.collection('users').doc(userId)
+    // const document1 = await documentRef1.get()
+    
+    // await documentRef1.update(userUpdate)
 
 
-   
+    // const documentRef2 = db.collection('usersContact').doc(userId)
+    // await documentRef2.update(userUpdate)
+    // console.log('Data updated in both collections successfully');
+    response(200,updatedUser,"User updated",res)
+    }) .catch((error) => {
+        console.log(error);
+        response(400,error,"Failed to update user",res)
+    })
 })
 
 // Server running on port ....

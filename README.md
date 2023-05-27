@@ -62,18 +62,14 @@ res :
 https://beginners-project-69.et.r.appspot.com/v1/profile
 
 req : {
-    "password": "",
-    "phoneNumber": "",
-    "name": "",
-    "email": "",
-    "phoneMobileCompany": "",
-    "phoneTelpCompany": "",
-    "workplace_uri": "",
-    "phoneFaxCompany": "",
+    "job_title": "",
+    "workplace": "",
     "addressCompany": "",
     "emailCompany": "",
-    "job_title": "",
-    "workplace": ""
+    "phoneTelpCompany": "",
+    "phoneFaxCompany": "",
+    "phoneMobileCompany": "",
+    "workplace_uri":""
 }
 
 [4] Card Storage
