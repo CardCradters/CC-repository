@@ -190,7 +190,7 @@ app.get('/v1/profile', async (req,res) => {
     verifyIdToken(idToken)
     .then((decodedToken) => {
         const userId = decodedToken.uid
-        const usersRef =  db.collection('users/').doc(userId).get() 
+        const usersRef =  db.collection('users').doc(userId).get() 
         .then((doc) => {
         if (doc.exists) {
             usersData = doc.data()
@@ -198,14 +198,13 @@ app.get('/v1/profile', async (req,res) => {
             }
         })
     }) .catch ((error) => {
-        response(200,error,"Login first!",res)
+        response(400,error,"Login first!",res)
 
     })
 });
        
 // Update Profile kita
 app.post('/v1/profile', async (req,res) => {
-    
     const userUpdate = {
         job_title: req.body.job_title,
         workplace: req.body.workplace,
@@ -246,12 +245,19 @@ app.post('/v1/profile', async (req,res) => {
             console.log(doc.id);
             const exceptUserId = db.collection('users').doc(doc.id).collection('usersContact').doc(userId)
             const exceptUserIdDoc = await exceptUserId.get()
-    
-            await exceptUserId.update(userUpdate)
+
+            if(exceptUserIdDoc.exists)
+            {
+                await exceptUserId.update(userUpdate)
+                console.log('Document updated for '+doc.id);
+            } else 
+            {
+                console.log('Document not found');
+            }
+           
+          
         } 
             
-        
-
     })
 
     // const documentRef1 = db.collection('users').doc(userId)
