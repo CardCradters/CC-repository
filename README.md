@@ -127,3 +127,14 @@ res :
 "workplace": "",
 "stared":true
 }
+
+Delete stared dari user
+_POST_
+https://beginners-project-69.et.r.appspot.com/v1/card-storage/star/delete/:id
+
+[10] Card Storage Company
+_GET_
+https://beginners-project-69.et.r.appspot.com/v1/card-storage/company
+res {
+
+}

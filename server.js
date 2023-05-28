@@ -406,7 +406,35 @@ verifyIdToken(idToken)
 })
 })
 
-// Cardstorage delete user stared
+// Delete stared user
+app.post('/v1/cardstorage/star/delete/:id', async(req,res) => {
+       // Verify Token
+const authHeader = req.headers.authorization
+    
+if(!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(403).send('Unauthorized')
+}
+
+const idToken = authHeader.split('Bearer ') [1]
+
+verifyIdToken(idToken)
+.then(async (decodedToken) => {
+    const userId = decodedToken.uid
+      // Ambil collection / table namenya
+      const usersCollection = db.collection('users').doc(userId).collection('usersContact').doc(req.params.id)
+      // Method get() untuk mengambil isi dari collection / table
+      const getCollection = await usersCollection.update({
+        stared: false
+      })
+
+      
+      console.log(getCollection)
+      response(200,getCollection,"Users Contact",res)
+}) .catch ((error) => {   
+    console.log(error)
+    response(500,error,"No Saved User",res)
+})
+})
 
 // Server running on port ....
 const PORT = process.env.PORT || 8080
