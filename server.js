@@ -63,6 +63,7 @@ app.post('/v1/auth/signup', async (req,res) =>{
 
     // Storing user data to realtime database
     const usersRef = admin.firestore().collection('users/').doc(userCreate.uid).set({
+        uid: userCreate.uid,
         name: userProperty.name,
         phoneNumber: userProperty.phoneNumber,
         email: userProperty.email,
@@ -103,7 +104,7 @@ app.get('/v1/homepage', async (req,res) => {
           // Ambil collection / table namenya
           const usersCollection = db.collection('users').doc(userId).collection('usersContact')
           // Method get() untuk mengambil isi dari collection / table
-          const getCollection = await usersCollection.select('name','job_title','workplace').get();
+          const getCollection = await usersCollection.select('name','job_title','workplace','uid').get();
           // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
           // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
           let getCollectionData = []  
@@ -146,7 +147,7 @@ app.get('/v1/homepage/:id', async (req,res) => {
                 const collectionRef = db.collection('users');
                 const querySnapshot = await collectionRef
                   .where('name', '>=', capitalizedName)
-                  .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title')
+                  .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title','uid')
                   .get();
             
                 const results = [];
@@ -308,6 +309,104 @@ app.post('/v1/profile', async (req,res) => {
         response(400,error,"Failed to update user",res)
     })
 })
+
+// Cardstorage All
+app.get('/v1/cardstorage/all', async (req,res) => {
+// Verify Token
+const authHeader = req.headers.authorization
+    
+if(!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(403).send('Unauthorized')
+}
+
+const idToken = authHeader.split('Bearer ') [1]
+
+verifyIdToken(idToken)
+.then(async (decodedToken) => {
+    const userId = decodedToken.uid
+      // Ambil collection / table namenya
+      const usersCollection = db.collection('users').doc(userId).collection('usersContact')
+      // Method get() untuk mengambil isi dari collection / table
+      const getCollection = await usersCollection.select('name','job_title','workplace','uid','stared').get();
+      // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
+      // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
+      let getCollectionData = []  
+       getCollection.forEach(allFiles => {
+          getCollectionData.push(allFiles.data()) 
+      })
+      
+      console.log(getCollectionData)
+      response(200,getCollectionData,"Users Contact",res)
+}) .catch ((error) => {   
+    console.log(error)
+    response(500,error,"No Saved User",res)
+})
+})
+
+// Cardstorage make user stared
+app.post('/v1/cardstorage/star/:id', async (req,res) => {
+    // Verify Token
+const authHeader = req.headers.authorization
+    
+if(!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(403).send('Unauthorized')
+}
+
+const idToken = authHeader.split('Bearer ') [1]
+
+verifyIdToken(idToken)
+.then(async (decodedToken) => {
+    const userId = decodedToken.uid
+      // Ambil collection / table namenya
+      const usersCollection = db.collection('users').doc(userId).collection('usersContact').doc(req.params.id)
+      // Method get() untuk mengambil isi dari collection / table
+      const getCollection = await usersCollection.update({
+        stared : true
+      })
+
+      
+      console.log(getCollection)
+      response(200,getCollection,"Users Contact",res)
+}) .catch ((error) => {   
+    console.log(error)
+    response(500,error,"No Saved User",res)
+})
+})
+
+// Cardstorage get user stared
+app.get('/v1/cardstorage/star', async (req,res) => {
+    // Verify Token
+const authHeader = req.headers.authorization
+    
+if(!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(403).send('Unauthorized')
+}
+
+const idToken = authHeader.split('Bearer ') [1]
+
+verifyIdToken(idToken)
+.then(async (decodedToken) => {
+    const userId = decodedToken.uid
+      // Ambil collection / table  berdasarkan stared == true
+      const usersCollection = db.collection('users').doc(userId).collection('usersContact').where('stared', '==', true)
+      // Method get() untuk mengambil isi dari collection / table
+      const getCollection = await usersCollection.select('name','job_title','workplace','uid','stared').get();
+      // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
+      // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
+      let getCollectionData = []  
+       getCollection.forEach(allFiles => {
+          getCollectionData.push(allFiles.data()) 
+      })
+      
+      console.log(getCollectionData)
+      response(200,getCollectionData,"Users Contact",res)
+}) .catch ((error) => {   
+    console.log(error)
+    response(500,error,"No Saved User",res)
+})
+})
+
+// Cardstorage delete user stared
 
 // Server running on port ....
 const PORT = process.env.PORT || 8080
