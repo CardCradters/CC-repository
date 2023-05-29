@@ -19,6 +19,7 @@ https://beginners-project-69.et.r.appspot.com/v1/homepage
 
 res :
 {
+"uid": "",
 "name": "",
 "workplace": "",
 "job_title": ""
@@ -29,6 +30,7 @@ https://beginners-project-69.et.r.appspot.com/v1/homepage/:id
 
 res :
 {
+"uid": "",
 "name": "",
 "workplace": "",
 "job_title": ""
