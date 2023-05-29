@@ -174,3 +174,25 @@ res :
 "email": "andiversi2@gmail.com",
 "workplace": "Udading Company"
 }
+
+[13] Upload Gambar ke Cloud Storage +  (Firestore sesuai dengan siapa User tersebut)
+
+*POST*
+https://beginners-project-69.et.r.appspot.com/v1/upload
+
+untuk test nya : 
+1. Buka postman
+2. pilih POST, masukkan link diatas
+3. ke Body
+4. pilih form-data bukan yang raw
+5. key nya isi -> file
+6. arahin cursor ke file, di kanan ada dropdown menu, pilih file
+7. di bagian value pencet file
+8. pilih file yang mau di masukkan
+9. click send di samping link
+
+
+req :
+{
+file : "filenya apa",
+}

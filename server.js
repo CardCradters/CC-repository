@@ -313,10 +313,29 @@ app.get('/v1/profile', async (req,res) => {
     .then((decodedToken) => {
         const userId = decodedToken.uid
         const usersRef =  db.collection('users').doc(userId).get() 
-        .then((doc) => {
+        .then(async (doc) => {
         if (doc.exists) {
             usersData = doc.data()
+
+                    // Buat menampilkan gambar
+        // fileName = usersData.filename
+        // file = bucket.file('uploads/'+fileName)
+
+        // await file.exists((err,exists) => {
+
+                // Create a readable stream to the file in Cloud Storage
+                // const readStream = file.createReadStream();
+
+                // Set the appropriate content type for the response
+                // res.contentType('image/jpeg');
+
+                // Pipe the stream to the response to display the image
+                //  readStream.pipe(res);
+        // })
+
+                    // End of menampilkan gambar
             response(200,usersData,"Berikut profile user",res)
+
             }
         })
     }) .catch ((error) => {
