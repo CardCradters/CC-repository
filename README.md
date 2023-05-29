@@ -25,7 +25,8 @@ res :
 "job_title": ""
 }
 
-[3] Homepage Search
+[3] Homepage Search { *Berdasarkan Nama* }
+*GET*
 https://beginners-project-69.et.r.appspot.com/v1/homepage/:id
 
 res :
@@ -138,6 +139,19 @@ https://beginners-project-69.et.r.appspot.com/v1/card-storage/star/delete/:id
 _GET_
 https://beginners-project-69.et.r.appspot.com/v1/card-storage/company
 
-res {
+res
+{
 
+}
+
+[11] Card Storage Search { *Berdasarkan Nama* }
+*GET*
+https://beginners-project-69.et.r.appspot.com/v1/card-storage/:id 
+
+res :
+{
+"uid": "",
+"name": "",
+"workplace": "",
+"job_title": ""
 }

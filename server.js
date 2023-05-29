@@ -343,6 +343,8 @@ verifyIdToken(idToken)
 })
 })
 
+// Stared
+
 // Cardstorage make user stared
 app.post('/v1/cardstorage/star/:id', async (req,res) => {
     // Verify Token
@@ -406,7 +408,7 @@ verifyIdToken(idToken)
 })
 })
 
-// Delete stared user
+// Card storage Delete stared user
 app.post('/v1/cardstorage/star/delete/:id', async(req,res) => {
        // Verify Token
 const authHeader = req.headers.authorization
@@ -434,6 +436,58 @@ verifyIdToken(idToken)
     console.log(error)
     response(500,error,"No Saved User",res)
 })
+})
+
+// End of Stared
+
+// Company
+
+// Cardstorage get user company
+app.get('/v1/cardstorage/company', async(req,res) => {
+
+})
+// End of Company
+
+// Card Storage Search
+app.get('/v1/cardstorage/:id', async(req,res) => {
+    try {
+        const authHeader = req.headers.authorization
+  
+          if(!authHeader || !authHeader.startsWith('Bearer ')) {
+              return res.status(403).send('Unauthorized')
+          }
+          const idToken = authHeader.split('Bearer ') [1]
+          verifyIdToken(idToken)
+          .then(async (decodedToken) => {
+              const userId = decodedToken.uid
+              const words = req.params.id.split(' ')
+              const capitalizedWords = words.map(word =>{
+                  const firstChar = word.charAt(0).toUpperCase();
+                  const restOfWord = word.slice(1).toLowerCase();
+                  return firstChar + restOfWord;
+              })
+              const capitalizedName = capitalizedWords.join(' ')
+              console.log(capitalizedName);
+      
+              const collectionRef = db.collection('users').doc(userId).collection('usersContact')
+              const querySnapshot = await collectionRef
+                .where('name', '>=', capitalizedName)
+                .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title','uid')
+                .get();
+          
+              const results = [];
+              querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                results.push(data);
+              });
+          
+              response(200,results,"Search results",res)
+          })
+    
+
+    } catch (error) {
+      response(400,error,"No users found by Name",res)
+    }
 })
 
 // Server running on port ....
