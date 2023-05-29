@@ -2,6 +2,9 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const multer = require('multer')
+const { v4: uuidv4 } = require('uuid');
+
 // Setup for service account initializing node js to connect to firebase API
 const admin = require('firebase-admin')
 const credentials = require('./key.json')
@@ -10,7 +13,18 @@ const response = require('./response')
 const app = express()
 admin.initializeApp({
     credential: admin.credential.cert(credentials),
+    storageBucket: 'gs://beginners-project-69.appspot.com'
 })
+// initialize bucket
+const bucket = admin.storage().bucket()
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 5 * 1024 * 1024 // Limit file size to 5MB (adjust as needed)
+    }
+  });
+const auth = admin.auth
+
 // Initialize database
 // firestore
 const db = admin.firestore()
@@ -27,9 +41,13 @@ function verifyIdToken(idToken) {
     return admin.auth().verifyIdToken(idToken)
 }
 
+
+
 // SignUp
-app.post('/v1/auth/signup', async (req,res) =>{
+app.post('/v1/auth/signup', upload.single('image'),async (req,res) =>{
     try {
+    
+   
     // Authentication
     const userProperty = {
         name: req.body.name,
@@ -48,6 +66,10 @@ app.post('/v1/auth/signup', async (req,res) =>{
           phoneMobileCompany : "",
           workplace_uri : "",  
     }
+
+
+
+    // Create User
     const userCreate = await admin.auth().createUser({
         name: userProperty.name,
         phoneNumber: userProperty.phoneNumber,
@@ -62,7 +84,7 @@ app.post('/v1/auth/signup', async (req,res) =>{
     userProperty.password = hashedPassword
 
     // Storing user data to realtime database
-    const usersRef = admin.firestore().collection('users/').doc(userCreate.uid).set({
+    const usersRef = admin.firestore().collection('users/').doc(userCreate.uid).set({ 
         uid: userCreate.uid,
         name: userProperty.name,
         phoneNumber: userProperty.phoneNumber,
@@ -83,9 +105,66 @@ app.post('/v1/auth/signup', async (req,res) =>{
         })
     }catch(error) {
             response(400,error,"Failed To Create User",res)
+            console.log(error);
         }
    
 })  
+
+// File upload
+app.post('/v1/upload', upload.single('file'), async(req,res) => {
+
+    try {
+        const authHeader = req.headers.authorization;
+    
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return res.status(403).send('Unauthorized');
+        }
+    
+        const idToken = authHeader.split('Bearer ')[1];
+    
+        verifyIdToken(idToken)
+          .then(async (decodedToken) => {
+            const userId = decodedToken.uid;
+            const file = req.file;
+            // Generate unique name
+            const filename = `${uuidv4()}-${file.originalname}`;
+    
+            // Lokasi tujuan file disimpannya
+            const destination = `uploads/${filename}`;
+    
+            // Upload file ke cloud storage
+            const fileUpload = bucket.file(destination);
+            const fileStream = fileUpload.createWriteStream({
+              metadata: {
+                contentType: file.mimetype, // Set the content type of the file
+              },
+            });
+    
+            fileStream.on('error', (error) => {
+              console.error('Error uploading file:', error);
+              res.status(500).send('Error uploading file.');
+            });
+    
+            fileStream.on('finish', async () => {
+              // Create a Firestore document to store the file information
+              const fileRef = await db.collection('users').doc(userId).update({
+                filename,
+                storagePath: destination,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+              });
+    
+              console.log('File uploaded and Firestore document created');
+              res.send('File uploaded successfully.');
+            });
+    
+            fileStream.end(file.buffer);
+          });
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        res.status(500).send('Error uploading file.');
+      }
+})
+
 
 // Homepage
 app.get('/v1/homepage', async (req,res) => { 
