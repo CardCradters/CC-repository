@@ -56,7 +56,7 @@ res :
 
 [5] User detail save ( gak perlu input apa2 soalnya cuma save aja )
 _POST_
-https://beginners-project-69.et.r.appspot.com/v1/user-detail/:
+https://beginners-project-69.et.r.appspot.com/v1/user-detail/:id
 
 [6] Profile ( _nanti di frontend jangan tampilin [uid] dan [password]_)
 _GET_
@@ -135,6 +135,7 @@ https://beginners-project-69.et.r.appspot.com/v1/card-storage/star/delete/:id
 [10] Card Storage Company
 _GET_
 https://beginners-project-69.et.r.appspot.com/v1/card-storage/company
+
 res {
 
 }
