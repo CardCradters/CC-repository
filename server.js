@@ -41,10 +41,12 @@ function verifyIdToken(idToken) {
     return admin.auth().verifyIdToken(idToken)
 }
 
-
+app.get('/',async(req,res)=>{
+    res.send('Welcome to DiNa API - anonymous dev')
+})
 
 // SignUp
-app.post('/v1/auth/signup', upload.single('image'),async (req,res) =>{
+app.post('/v1/auth/signup',async (req,res) =>{
     try {
     
    
