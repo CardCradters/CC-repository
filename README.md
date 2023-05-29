@@ -101,7 +101,7 @@ req :
 [8] Card Storage All
 
 _GET_
-https://beginners-project-69.et.r.appspot.com/v1/card-storage/all
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/all
 
 res :
 {
@@ -116,11 +116,11 @@ res :
 Mengklik user bintang agar stared
 
 _POST_
-https://beginners-project-69.et.r.appspot.com/v1/card-storage/star/:id
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/star/:id
 
 Menampilkan user yang telah dibintangi dengan menambahkan stared : true
 _GET_
-https://beginners-project-69.et.r.appspot.com/v1/card-storage/star
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/star
 
 res :
 {
@@ -133,11 +133,11 @@ res :
 
 Delete stared dari user
 _POST_
-https://beginners-project-69.et.r.appspot.com/v1/card-storage/star/delete/:id
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/star/delete/:id
 
 [10] Card Storage Company
 _GET_
-https://beginners-project-69.et.r.appspot.com/v1/card-storage/company
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/company
 
 res
 {
@@ -146,7 +146,7 @@ res
 
 [11] Card Storage Search { *Berdasarkan Nama* }
 *GET*
-https://beginners-project-69.et.r.appspot.com/v1/card-storage/:id 
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/:id 
 
 res :
 {
