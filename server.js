@@ -490,6 +490,35 @@ app.get('/v1/cardstorage/:id', async(req,res) => {
     }
 })
 
+// Card Storage Company
+app.get('/v1/cardstorage', async(req,res) => {
+    
+  
+        const authHeader = req.headers.authorization
+  
+        if(!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(403).send('Unauthorized')
+        }
+        const idToken = authHeader.split('Bearer ') [1]
+        verifyIdToken(idToken)
+        .then(async (decodedToken) => {
+            const userId = decodedToken.uid
+        const collectionRef = db.collection('users').doc(userId).collection('usersContact')
+        const query = collectionRef.orderBy('workplace')
+
+        let dataUser = []
+        await query.get()
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
+                const data = doc.data()
+                dataUser.push(data)
+            })
+        })
+        response(200,dataUser,"Search results",res)
+        })
+
+})
+
 // Server running on port ....
 const PORT = process.env.PORT || 8080
 app.listen(PORT, () => {

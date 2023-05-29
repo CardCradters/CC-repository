@@ -25,8 +25,8 @@ res :
 "job_title": ""
 }
 
-[3] Homepage Search { *Berdasarkan Nama* }
-*GET*
+[3] Homepage Search { _Berdasarkan Nama_ }
+_GET_
 https://beginners-project-69.et.r.appspot.com/v1/homepage/:id
 
 res :
@@ -144,9 +144,9 @@ res
 
 }
 
-[11] Card Storage Search { *Berdasarkan Nama* }
-*GET*
-https://beginners-project-69.et.r.appspot.com/v1/cardstorage/:id 
+[11] Card Storage Search { _Berdasarkan Nama_ }
+_GET_
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/:id
 
 res :
 {
@@ -154,4 +154,23 @@ res :
 "name": "",
 "workplace": "",
 "job_title": ""
+}
+
+[12] Card Storage Company { _Syarat A-Z berlaku itu jika huruf company itu besar, kayak Traveloka, tp bukan traveloka_}
+
+res :
+{
+"phoneMobileCompany": "",
+"phoneFaxCompany": "",
+"uid": "MwDnd68DyyW4sWdOC415oHFgqo62",
+"password": "$2b$10$le/q.UrogL0gJdIHNE9L7uBqsQxfJZhD5IXgM35RHPSDgsjLqfmOO",
+"phoneTelpCompany": "",
+"phoneNumber": "+6287951632178",
+"workplace_uri": "",
+"name": "Andi versi2",
+"addressCompany": "",
+"emailCompany": "",
+"job_title": "",
+"email": "andiversi2@gmail.com",
+"workplace": "Udading Company"
 }
