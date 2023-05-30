@@ -175,11 +175,11 @@ res :
 
 res :
 {
-"uid": "MwDnd68DyyW4sWdOC415oHFgqo62",
-"name": "Andi versi2",
+"uid": "",
+"name": "",
 "job_title": "",
-"email": "andiversi2@gmail.com",
-"workplace": "Udading Company",
+"email": "",
+"workplace": "",
 "stared:"",
 "filename:"",
 "storagePath":""
