@@ -21,8 +21,12 @@ res :
 {
 "uid": "",
 "name": "",
+"job_title": "",
+"email": "",
 "workplace": "",
-"job_title": ""
+"stared:"",
+"filename:"",
+"storagePath":""
 }
 
 [3] Homepage Search { _Berdasarkan Nama_ }
@@ -33,8 +37,12 @@ res :
 {
 "uid": "",
 "name": "",
+"job_title": "",
+"email": "",
 "workplace": "",
-"job_title": ""
+"stared:"",
+"filename:"",
+"storagePath":""
 }
 
 [4] User detail ( _nanti di frontend jangan tampilin [password]_)
@@ -54,7 +62,9 @@ res :
 "emailCompany": "",
 "job_title": "",
 "workplace": "",
-"email": ""
+"email": "",
+"filename":"",
+"storagePath":""
 }
 
 [5] User detail save ( gak perlu input apa2 soalnya cuma save aja )
@@ -79,7 +89,9 @@ res :
 "addressCompany": "",
 "emailCompany": "",
 "workplace": "",
-"job_title": ""
+"job_title": "",
+"filename": "",
+"storagePath":""
 }
 
 [7] Update Profile
@@ -108,7 +120,11 @@ res :
 "uid": "",
 "name": "",
 "job_title": "",
+"email": "",
 "workplace": "",
+"stared:"",
+"filename:"",
+"storagePath":""
 }
 
 [9] Card Storage Star
@@ -127,24 +143,19 @@ res :
 "uid": "",
 "name": "",
 "job_title": "",
+"email": "",
 "workplace": "",
-"stared":true
+"stared:"",
+"filename:"",
+"storagePath":""
 }
 
 Delete stared dari user
 _POST_
 https://beginners-project-69.et.r.appspot.com/v1/cardstorage/star/delete/:id
 
-[10] Card Storage Company
-_GET_
-https://beginners-project-69.et.r.appspot.com/v1/cardstorage/company
 
-res
-{
-
-}
-
-[11] Card Storage Search { _Berdasarkan Nama_ }
+[10] Card Storage Search { _Berdasarkan Nama_ }
 _GET_
 https://beginners-project-69.et.r.appspot.com/v1/cardstorage/:id
 
@@ -152,30 +163,29 @@ res :
 {
 "uid": "",
 "name": "",
+"job_title": "",
+"email": "",
 "workplace": "",
-"job_title": ""
+"stared:"",
+"filename:"",
+"storagePath":""
 }
 
-[12] Card Storage Company { _Syarat A-Z berlaku itu jika huruf company itu besar, kayak Traveloka, tp bukan traveloka_}
+[11] Card Storage Company { _Syarat A-Z berlaku itu jika huruf company itu besar, kayak Traveloka, tp bukan traveloka_}
 
 res :
 {
-"phoneMobileCompany": "",
-"phoneFaxCompany": "",
 "uid": "MwDnd68DyyW4sWdOC415oHFgqo62",
-"password": "$2b$10$le/q.UrogL0gJdIHNE9L7uBqsQxfJZhD5IXgM35RHPSDgsjLqfmOO",
-"phoneTelpCompany": "",
-"phoneNumber": "+6287951632178",
-"workplace_uri": "",
 "name": "Andi versi2",
-"addressCompany": "",
-"emailCompany": "",
 "job_title": "",
 "email": "andiversi2@gmail.com",
-"workplace": "Udading Company"
+"workplace": "Udading Company",
+"stared:"",
+"filename:"",
+"storagePath":""
 }
 
-[13] Upload Gambar ke Cloud Storage +  (Firestore sesuai dengan siapa User tersebut)
+[12] Upload Gambar ke Cloud Storage +  (Firestore sesuai dengan siapa User tersebut)
 
 *POST*
 https://beginners-project-69.et.r.appspot.com/v1/upload

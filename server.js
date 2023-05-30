@@ -86,7 +86,7 @@ app.post('/v1/auth/signup',async (req,res) =>{
     userProperty.password = hashedPassword
 
     // Storing user data to realtime database
-    const usersRef = admin.firestore().collection('users/').doc(userCreate.uid).set({ 
+    const usersRef =  admin.firestore().collection('users/').doc(userCreate.uid).set({ 
         uid: userCreate.uid,
         name: userProperty.name,
         phoneNumber: userProperty.phoneNumber,
@@ -103,7 +103,8 @@ app.post('/v1/auth/signup',async (req,res) =>{
         workplace_uri : additionalInfo.workplace_uri,
     })
         .then(() => {
-            response(201,usersRef,"User Created Successfully",res)
+            response(201,userCreate,"User Created Successfully",res)
+            console.log('Success Create User');
         })
     }catch(error) {
             response(400,error,"Failed To Create User",res)
@@ -112,7 +113,7 @@ app.post('/v1/auth/signup',async (req,res) =>{
    
 })  
 
-// File upload
+//  File Gambar upload to Cloud Storage and Firestore
 app.post('/v1/upload', upload.single('file'), async(req,res) => {
 
     try {
@@ -185,7 +186,7 @@ app.get('/v1/homepage', async (req,res) => {
           // Ambil collection / table namenya
           const usersCollection = db.collection('users').doc(userId).collection('usersContact')
           // Method get() untuk mengambil isi dari collection / table
-          const getCollection = await usersCollection.select('name','job_title','workplace','uid').get();
+          const getCollection = await usersCollection.select('name','job_title','workplace','uid','filename','storagePath').get();
           // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
           // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
           let getCollectionData = []  
@@ -228,7 +229,7 @@ app.get('/v1/homepage/:id', async (req,res) => {
                 const collectionRef = db.collection('users');
                 const querySnapshot = await collectionRef
                   .where('name', '>=', capitalizedName)
-                  .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title','uid')
+                  .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title','uid','filename','storagePath')
                   .get();
             
                 const results = [];
@@ -427,7 +428,7 @@ verifyIdToken(idToken)
       // Ambil collection / table namenya
       const usersCollection = db.collection('users').doc(userId).collection('usersContact')
       // Method get() untuk mengambil isi dari collection / table
-      const getCollection = await usersCollection.select('name','job_title','workplace','uid','stared').get();
+      const getCollection = await usersCollection.select('name','job_title','workplace','uid','stared','filename','storagePath').get();
       // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
       // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
       let getCollectionData = []  
@@ -492,7 +493,7 @@ verifyIdToken(idToken)
       // Ambil collection / table  berdasarkan stared == true
       const usersCollection = db.collection('users').doc(userId).collection('usersContact').where('stared', '==', true)
       // Method get() untuk mengambil isi dari collection / table
-      const getCollection = await usersCollection.select('name','job_title','workplace','uid','stared').get();
+      const getCollection = await usersCollection.select('name','job_title','workplace','uid','stared','filename','storagePath').get();
       // array kosong untuk menyimpan data dari getCollection, karena getCollection itu isinya banyak,
       // bukan hanya data saja, jadi disini kita mengambil data nya aja untuk di simpan di array kosong dibawah.
       let getCollectionData = []  
@@ -540,14 +541,6 @@ verifyIdToken(idToken)
 
 // End of Stared
 
-// Company
-
-// Cardstorage get user company
-app.get('/v1/cardstorage/company', async(req,res) => {
-
-})
-// End of Company
-
 // Card Storage Search
 app.get('/v1/cardstorage/:id', async(req,res) => {
     try {
@@ -572,7 +565,7 @@ app.get('/v1/cardstorage/:id', async(req,res) => {
               const collectionRef = db.collection('users').doc(userId).collection('usersContact')
               const querySnapshot = await collectionRef
                 .where('name', '>=', capitalizedName)
-                .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title','uid')
+                .where('name', '<=', capitalizedName + '\uf8ff').select('name','workplace','job_title','uid','filename','storagePath')
                 .get();
           
               const results = [];
@@ -604,7 +597,7 @@ app.get('/v1/cardstorage', async(req,res) => {
         .then(async (decodedToken) => {
             const userId = decodedToken.uid
         const collectionRef = db.collection('users').doc(userId).collection('usersContact')
-        const query = collectionRef.orderBy('workplace')
+        const query = collectionRef.select('uid','name','job_title','workplace','filename','storagePath','stared').orderBy('workplace')
 
         let dataUser = []
         await query.get()
