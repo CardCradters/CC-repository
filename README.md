@@ -1,6 +1,12 @@
 ﻿BASE URL:
 https://beginners-project-69.et.r.appspot.com
 
+LINK CLOUD STORAGE :
+gs://beginners-project-69.appspot.com
+
+UNTUK PATH NYA :
+uploads/(fileName)
+
 [1] - Signup
 _POST_
 https://beginners-project-69.et.r.appspot.com/v1/auth/signup
@@ -206,3 +212,5 @@ req :
 {
 file : "filenya apa",
 }
+
+
