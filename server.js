@@ -585,8 +585,6 @@ app.get('/v1/cardstorage/:id', async(req,res) => {
 
 // Card Storage Company
 app.get('/v1/cardstorage', async(req,res) => {
-    
-  
         const authHeader = req.headers.authorization
   
         if(!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -610,6 +608,32 @@ app.get('/v1/cardstorage', async(req,res) => {
         response(200,dataUser,"Search results",res)
         })
 
+})
+
+// Delete Contact
+app.delete('/v1/cardstorage/:id', async(req,res)=> {
+    const authHeader = req.headers.authorization
+  
+        if(!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(403).send('Unauthorized')
+        }
+        const idToken = authHeader.split('Bearer ') [1]
+        verifyIdToken(idToken)
+        .then(async (decodedToken) => {
+            const userId = decodedToken.uid
+
+            db.collection('users').doc(userId).collection('usersContact').doc(req.params.id).delete()
+                .then(() => {
+                    res.status(200).json({ message: 'User deleted successfully' });
+                })
+                .catch((error) => {
+                    console.error('Error deleting user:', error);
+                    res.status(500).json({ error: 'Failed to delete user' });
+                  });
+        })
+
+
+   
 })
 
 // Server running on port ....

@@ -213,4 +213,7 @@ req :
 file : "filenya apa",
 }
 
+[13] Delete User from cardstorage
+*DELETE*
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/:id
 
