@@ -4,6 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const multer = require('multer')
 const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
 
 // Setup for service account initializing node js to connect to firebase API
 const admin = require('firebase-admin')
@@ -156,7 +157,7 @@ app.post('/v1/upload', upload.single('file'), async(req,res) => {
                 createdAt: admin.firestore.FieldValue.serverTimestamp(),
               });
     
-              console.log('File uploaded and Firestore document created');
+              console.log('File uploaded to cloud storage and Firestore document updated');
               res.send('File uploaded successfully.');
             });
     
@@ -167,7 +168,6 @@ app.post('/v1/upload', upload.single('file'), async(req,res) => {
         res.status(500).send('Error uploading file.');
       }
 })
-
 
 // Homepage
 app.get('/v1/homepage', async (req,res) => { 
@@ -302,51 +302,101 @@ app.post('/v1/user-detail/:id', async (req,res) => {
 })
 
 // Profile kita
-app.get('/v1/profile', async (req,res) => {
+// app.get('/v1/profile', async (req,res) => {
  
-    const authHeader = req.headers.authorization
+//     const authHeader = req.headers.authorization
     
-    if(!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).send('Unauthorized')
+//     if(!authHeader || !authHeader.startsWith('Bearer ')) {
+//         return res.status(403).send('Unauthorized')
+//     }
+
+//     const idToken = authHeader.split('Bearer ') [1]
+
+//     verifyIdToken(idToken)
+//     .then((decodedToken) => {
+//         const userId = decodedToken.uid
+//         const usersRef =  db.collection('users').doc(userId).get() 
+//         .then(async (doc) => {
+//         if (doc.exists) {
+//             usersData = doc.data()
+
+//                     // Buat menampilkan gambar
+//         fileName = usersData.filename
+//         file = bucket.file('uploads/'+fileName)
+
+//         await file.exists((err,exists) => {
+
+//                 // Create a readable stream to the file in Cloud Storage
+//                 const readStream = file.createReadStream();
+
+//                 // Set the appropriate content type for the response
+//                 res.contentType('image/jpeg');
+
+//                 // Pipe the stream to the response to display the image
+//                  readStream.pipe(res);
+//         })
+
+//                     // End of menampilkan gambar
+//             response(200,usersData,"Berikut profile user",res)
+//             }
+//         })
+//     }) .catch ((error) => {
+//         response(400,error,"Login first!",res)
+
+//     })
+// });
+   
+// Profile test
+app.get('/v1/profile', async (req, res) => {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).send('Unauthorized');
     }
 
-    const idToken = authHeader.split('Bearer ') [1]
+    const idToken = authHeader.split('Bearer ')[1];
 
     verifyIdToken(idToken)
-    .then((decodedToken) => {
-        const userId = decodedToken.uid
-        const usersRef =  db.collection('users').doc(userId).get() 
-        .then(async (doc) => {
-        if (doc.exists) {
-            usersData = doc.data()
+        .then(async (decodedToken) => {
+            const userId = decodedToken.uid;
+            const usersRef = db.collection('users').doc(userId).get()
+                .then(async (doc) => {
+                    if (doc.exists) {
+                        usersData = doc.data();
 
-                    // Buat menampilkan gambar
-        // fileName = usersData.filename
-        // file = bucket.file('uploads/'+fileName)
+                        // Retrieve JSON data
+                        const jsonData = usersData;
 
-        // await file.exists((err,exists) => {
+                        // Retrieve image URL
+                        const fileName = usersData.filename;
+                        const file = bucket.file('uploads/' + fileName);
+                        const imageUrl = await file.getSignedUrl({
+                            action: 'read',
+                            expires: '03-01-2500', // Set an appropriate expiry date
+                        });
 
-                // Create a readable stream to the file in Cloud Storage
-                // const readStream = file.createReadStream();
+                        // Make a request to fetch the image
+                        const imageResponse = await axios.get(imageUrl[0], {
+                            responseType: 'arraybuffer',
+                        });
 
-                // Set the appropriate content type for the response
-                // res.contentType('image/jpeg');
+                        // Set the appropriate content type for the response
+                        res.contentType('application/json');
 
-                // Pipe the stream to the response to display the image
-                //  readStream.pipe(res);
-        // })
-
-                    // End of menampilkan gambar
-            response(200,usersData,"Berikut profile user",res)
-
-            }
+                        // Send both JSON data and image as a response
+                        res.status(200).json({
+                            data: jsonData,
+                            image: Buffer.from(imageResponse.data, 'binary').toString('base64'),
+                        });
+                    }
+                });
         })
-    }) .catch ((error) => {
-        response(400,error,"Login first!",res)
-
-    })
+        .catch((error) => {
+            response(400, error, "Login first!", res);
+        });
 });
-       
+
 // Update Profile kita
 app.post('/v1/profile', async (req,res) => {
     const userUpdate = {
@@ -538,7 +588,6 @@ verifyIdToken(idToken)
     response(500,error,"No Saved User",res)
 })
 })
-
 // End of Stared
 
 // Card Storage Search
@@ -607,7 +656,6 @@ app.get('/v1/cardstorage', async(req,res) => {
         })
         response(200,dataUser,"Search results",res)
         })
-
 })
 
 // Delete Contact

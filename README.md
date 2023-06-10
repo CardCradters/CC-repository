@@ -106,14 +106,17 @@ https://beginners-project-69.et.r.appspot.com/v1/profile
 
 req :
 {
-"job_title": "",
-"workplace": "",
-"addressCompany": "",
-"emailCompany": "",
-"phoneTelpCompany": "",
-"phoneFaxCompany": "",
-"phoneMobileCompany": "",
-"workplace_uri":""
+    "data" : {
+        "job_title": "",
+        "workplace": "",
+        "addressCompany": "",
+        "emailCompany": "",
+        "phoneTelpCompany": "",
+        "phoneFaxCompany": "",
+        "phoneMobileCompany": "",
+        "workplace_uri":""
+     }
+    "image" : ""
 }
 
 [8] Card Storage All
@@ -178,6 +181,8 @@ res :
 }
 
 [11] Card Storage Company { _Syarat A-Z berlaku itu jika huruf company itu besar, kayak Traveloka, tp bukan traveloka_}
+*GET*
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage
 
 res :
 {
