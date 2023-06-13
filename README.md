@@ -1,3 +1,6 @@
+*THIS BRANCH IS UPDATED BY THE STRUCTURE OF THE FOLDER FROM MAIN*
+
+
 BASE URL:
 https://beginners-project-69.et.r.appspot.com
 
