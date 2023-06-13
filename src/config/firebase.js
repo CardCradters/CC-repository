@@ -4,7 +4,7 @@ const multer = require('multer')
 
 const firebaseAdmin = admin.initializeApp({
     credential: admin.credential.cert(credentials),
-    storageBucket: 'gs://dina-388908.appspot.com'
+    storageBucket: 'gs://beginners-project-69.appspot.com'
 })
 
 // initialize bucket

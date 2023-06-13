@@ -1,7 +1,6 @@
 const response = require('../middleware/response')
 const instance = require('../config/firebase')
 const verifyIdToken = require('../middleware/verifyIdToken')
-const { get } = require('../routes/userRoutes')
 // firestore and auth
 const db = instance.db
 

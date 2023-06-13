@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-app = express ()
+app = express()
 
 
 
@@ -22,8 +22,10 @@ app.use('/v1/profile', require('./src/routes/profileRoutes'))
 app.use('/v1/user-detail', require('./src/routes/userdetailRoutes'))
 // Cardstorage
 app.use('/v1/cardstorage', require('./src/routes/cardstorageRoutes'))
-
+// Upload image
 app.use('/v1/upload', require('./src/routes/uploadimageRoutes'))
+//  Homepage
+app.use('/v1/homepage', require('./src/routes/homepageRoutes'))
 
 const port = process.env.PORT || 5000
 app.listen(port, () => {

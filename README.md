@@ -9,7 +9,7 @@ uploads/(fileName)
 
 [1] - Signup
 _POST_
-https://dina-388908.et.r.appspot.com//v1/auth/signup
+https://dina-388908.et.r.appspot.com/v1/auth/signup
 
 req :
 {
