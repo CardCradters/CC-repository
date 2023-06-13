@@ -1,15 +1,15 @@
 BASE URL:
-https://dina-388908.et.r.appspot.com/
+https://beginners-project-69.et.r.appspot.com
 
 LINK CLOUD STORAGE :
-gs://dina-388908.appspot.com
+gs://beginners-project-69.appspot.com
 
 UNTUK PATH NYA :
 uploads/(fileName)
 
 [1] - Signup
 _POST_
-https://dina-388908.et.r.appspot.com/v1/auth/signup
+https://beginners-project-69.et.r.appspot.com/v1/auth/signup
 
 req :
 {
@@ -21,7 +21,7 @@ req :
 
 [2] Homepage
 _GET_
-https://dina-388908.et.r.appspot.com/v1/homepage
+https://beginners-project-69.et.r.appspot.com/v1/homepage
 
 res :
 {
@@ -37,7 +37,7 @@ res :
 
 [3] Homepage Search { _Berdasarkan Nama_ }
 _GET_
-https://dina-388908.et.r.appspot.com/v1/homepage/:id
+https://beginners-project-69.et.r.appspot.com/v1/homepage/:id
 
 res :
 {
@@ -53,7 +53,7 @@ res :
 
 [4] User detail ( _nanti di frontend jangan tampilin [password]_)
 _GET_
-https://dina-388908.et.r.appspot.com/v1/user-detail/:id
+https://beginners-project-69.et.r.appspot.com/v1/user-detail/:id
 
 res :
 {
@@ -75,11 +75,11 @@ res :
 
 [5] User detail save ( gak perlu input apa2 soalnya cuma save aja )
 _POST_
-https://dina-388908.et.r.appspot.com/v1/user-detail/:id
+https://beginners-project-69.et.r.appspot.com/v1/user-detail/:id
 
 [6] Profile ( _nanti di frontend jangan tampilin [uid] dan [password]_)
 _GET_
-https://dina-388908.et.r.appspot.com/v1/profile
+https://beginners-project-69.et.r.appspot.com/v1/profile
 
 res :
 {
@@ -102,24 +102,27 @@ res :
 
 [7] Update Profile
 _POST_
-https://dina-388908.et.r.appspot.com/v1/profile
+https://beginners-project-69.et.r.appspot.com/v1/profile
 
 req :
 {
-"job_title": "",
-"workplace": "",
-"addressCompany": "",
-"emailCompany": "",
-"phoneTelpCompany": "",
-"phoneFaxCompany": "",
-"phoneMobileCompany": "",
-"workplace_uri":""
+    "data" : {
+        "job_title": "",
+        "workplace": "",
+        "addressCompany": "",
+        "emailCompany": "",
+        "phoneTelpCompany": "",
+        "phoneFaxCompany": "",
+        "phoneMobileCompany": "",
+        "workplace_uri":""
+     }
+    "image" : ""
 }
 
 [8] Card Storage All
 
 _GET_
-https://dina-388908.et.r.appspot.com/v1/cardstorage/all
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/all
 
 res :
 {
@@ -138,11 +141,11 @@ res :
 Mengklik user bintang agar stared
 
 _POST_
-https://dina-388908.et.r.appspot.com/v1/cardstorage/star/:id
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/star/:id
 
 Menampilkan user yang telah dibintangi dengan menambahkan stared : true
 _GET_
-https://dina-388908.et.r.appspot.com/v1/cardstorage/star
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/star
 
 res :
 {
@@ -158,12 +161,12 @@ res :
 
 Delete stared dari user
 _POST_
-https://dina-388908.et.r.appspot.com/v1/cardstorage/star/delete/:id
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/star/delete/:id
 
 
 [10] Card Storage Search { _Berdasarkan Nama_ }
 _GET_
-https://dina-388908.et.r.appspot.com/v1/cardstorage/:id
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/:id
 
 res :
 {
@@ -178,6 +181,8 @@ res :
 }
 
 [11] Card Storage Company { _Syarat A-Z berlaku itu jika huruf company itu besar, kayak Traveloka, tp bukan traveloka_}
+*GET*
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage
 
 res :
 {
@@ -194,7 +199,7 @@ res :
 [12] Upload Gambar ke Cloud Storage +  (Firestore sesuai dengan siapa User tersebut)
 
 *POST*
-https://dina-388908.et.r.appspot.com/v1/upload
+https://beginners-project-69.et.r.appspot.com/v1/upload
 
 untuk test nya : 
 1. Buka postman
@@ -215,5 +220,5 @@ file : "filenya apa",
 
 [13] Delete User from cardstorage
 *DELETE*
-https://dina-388908.et.r.appspot.com/v1/cardstorage/:id
+https://beginners-project-69.et.r.appspot.com/v1/cardstorage/:id
 
